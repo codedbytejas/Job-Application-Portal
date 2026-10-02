@@ -1,38 +1,55 @@
-# Job Application Portal (College Backend Project)
+# Job Application Portal (Full-Stack Recruitment Platform)
 
-A complete full-stack web application built for a college Backend Development project. It connects Job Candidates with Recruiters, featuring JWT authentication, role-based authorization, PDF resume uploads using Multer, duplicate application prevention, and secure recruiter job ownership checks.
+A modern, production-deployed recruitment platform connecting Job Candidates with Enterprise Recruiters. Features secure JWT authentication, role-based access control, Multer PDF resume uploads, duplicate application prevention, recruiter job ownership checks, and MongoDB Atlas cloud database integration.
 
 ---
 
-## 📌 Project Overview & Features
+## 🌐 Live Deployment & Production Links
+
+| Component | Platform / Host | Live Production URL |
+| :--- | :--- | :--- |
+| **Frontend Web App** | **Vercel** (Global Edge CDN) | [https://job-application-portal-psi.vercel.app/](https://job-application-portal-psi.vercel.app/) |
+| **Backend REST API** | **Render** (Cloud Web Service) | [https://job-portal-backend-nkp4.onrender.com](https://job-portal-backend-nkp4.onrender.com) |
+| **Cloud Database** | **MongoDB Atlas** (Dedicated Cluster) | `mongodb+srv://...` (AWS Cloud) |
+
+### 🚀 Deployment Architecture & Infrastructure
+- **Frontend (Vercel)**: Built with **React.js & Vite**, deployed on Vercel's Edge Network for sub-second global asset delivery. Includes client-side routing rewrites (`vercel.json`) to prevent 404s on browser reloads.
+- **Backend (Render)**: Hosted as a cloud **Node.js & Express** service. Handles API routing, secure bcrypt password hashing, JWT session signing/verification, and Multer file upload storage.
+- **Database (MongoDB Atlas)**: Remote database cluster storing Candidates, Recruiters, Job Openings, and Application records with Mongoose relational population.
+- **Security & Networking**: Configured with strict CORS policies, environment variable encryption, and bearer token authorization across all sensitive endpoints.
+
+---
+
+## 📌 Project Overview & Key Features
 
 ### 👤 Candidate (Job Seeker)
-- **Register & Login** with secure hashed passwords (bcryptjs).
-- **Browse Jobs**: View all active job listings with company, location, and details.
-- **Job Details**: Read full role descriptions.
-- **Apply with PDF Resume**: Upload PDF resume directly via Multer (multipart/form-data).
-- **Duplicate Prevention**: Cannot apply to the same job more than once (returns clear error: *"You have already applied for this job."*).
-- **Candidate Dashboard**: Track submitted applications and application dates.
+- **Register & Login**: Password hashing using `bcryptjs` (10 salt rounds) with JWT session tokens.
+- **Browse & Filter Openings**: Dynamic search by keywords, location, employment type, experience level, and compensation.
+- **Role Details**: Rich view of responsibilities, requirements, qualifications, and company background.
+- **1-Click PDF Resume Application**: Direct multipart resume file upload powered by Multer.
+- **Automated Duplicate Prevention**: System automatically checks prior submissions and rejects duplicates with HTTP 400 (*"You have already applied for this job."*).
+- **Candidate Workspace**: Track real-time status of submitted applications, saved bookmarks, and profile details.
 
 ### 👔 Recruiter (Employer)
-- **Register & Login** with dedicated recruiter credentials.
-- **Post Jobs**: Create job openings with title, company, location, and description.
-- **Recruiter Dashboard**: View only jobs posted by the logged-in recruiter.
-- **View Applicants & Resumes**: Access applicants who applied to their posted jobs and inspect/download PDF resumes.
-- **Ownership Authorization Check**: Cannot view applicants of jobs created by other recruiters (returns 403: *"You are not authorized to view these applicants."*).
+- **Dedicated Recruiter Authentication**: Separate recruiter onboarding and session management.
+- **Job Publishing**: Create verified job postings with location, tech stack requirements, and description.
+- **Recruiter Hub**: Manage only jobs created by the authenticated recruiter.
+- **ATS Candidate Pipeline**: Review applicants per position, view/download submitted PDF resumes, and transition applicant hiring stages (Submitted, Reviewing, Shortlisted, Interview, Hired).
+- **Strict Ownership Verification**: Enforces authorization checks ensuring recruiters cannot access applicant data belonging to other employers (returns HTTP 403: *"You are not authorized to view these applicants."*).
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
-- **Backend**: Node.js, Express.js, MongoDB, Mongoose, JWT (`jsonwebtoken`), `bcryptjs`, `multer`, `dotenv`, `cors`
-- **Frontend**: React.js (Vite), React Router v6, Axios, Plain CSS
+- **Frontend**: React 18, Vite, React Router v6, Axios, Modern Responsive CSS, Custom SVG Icon Suite
+- **Backend**: Node.js, Express.js, MongoDB Atlas, Mongoose ODM, JSON Web Tokens (`jsonwebtoken`), `bcryptjs`, `multer`, `cors`, `dotenv`
+- **Deployment & DevOps**: Vercel (Frontend), Render (Backend), MongoDB Atlas (Database), Git & GitHub CI/CD
 
 ---
 
-## 📂 Project Structure
+## 📂 Repository Structure
 
-```
+```text
 BACKEND SEM3/
 ├── backend/
 │   ├── config/
@@ -56,8 +73,9 @@ BACKEND SEM3/
 │   ├── uploads/                  # Uploaded PDF resumes directory
 │   ├── .env                      # Environment config
 │   ├── .env.example              # Example environment variables
+│   ├── seed.js                   # MongoDB Atlas sample data seeder
 │   ├── server.js                 # Express app entry point
-│   ├── postman_collection.json   # Ready-to-import Postman collection
+│   ├── postman_collection.json   # Ready-to-import Postman API collection
 │   ├── package.json
 │   └── README.md
 │
@@ -65,19 +83,32 @@ BACKEND SEM3/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── Navbar.jsx        # Role-aware navigation bar
-│   │   │   └── JobCard.jsx       # Job display card
+│   │   │   ├── JobCard.jsx       # Job display card
+│   │   │   ├── Icons.jsx         # Clean SVG icon suite
+│   │   │   ├── CompanyModal.jsx  # Employer details modal
+│   │   │   ├── ShareModal.jsx    # Social & direct link sharing
+│   │   │   ├── Toast.jsx         # Notification alerts
+│   │   │   └── Footer.jsx        # Footer component
 │   │   ├── pages/
-│   │   │   ├── Login.jsx         # Role selection login
-│   │   │   ├── Register.jsx      # Role selection registration
-│   │   │   ├── Jobs.jsx          # Public/candidate jobs list
+│   │   │   ├── Home.jsx          # Hero search, sectors, featured roles
+│   │   │   ├── Jobs.jsx          # Public/candidate jobs list with filters
 │   │   │   ├── JobDetails.jsx    # Job info + PDF resume upload
-│   │   │   ├── CandidateDashboard.jsx # Applied jobs tracker
-│   │   │   ├── RecruiterDashboard.jsx # Recruiter posted jobs
-│   │   │   ├── AddJob.jsx        # Post job form
-│   │   │   └── Applicants.jsx    # View applicants with resumes
+│   │   │   ├── CandidateDashboard.jsx # Applied jobs tracker & bookmarks
+│   │   │   ├── RecruiterDashboard.jsx # Recruiter posted jobs hub
+│   │   │   ├── Applicants.jsx    # ATS candidate pipeline & resume viewer
+│   │   │   ├── AddJob.jsx        # Post job form with live preview
+│   │   │   ├── Login.jsx         # Role selection login
+│   │   │   └── Register.jsx      # Role selection registration
+│   │   ├── utils/
+│   │   │   ├── appliedJobs.js    # Application synchronization helper
+│   │   │   ├── recruiterStorage.js # Candidate ATS stage override storage
+│   │   │   └── savedJobs.js      # Bookmarked jobs local helper
+│   │   ├── data/
+│   │   │   └── demoJobs.js       # Curated market data & company profiles
 │   │   ├── App.jsx               # React Router config
 │   │   ├── main.jsx              # Vite entry point
-│   │   └── App.css               # Clean styling
+│   │   └── App.css               # Clean professional styling
+│   ├── vercel.json               # SPA rewrites config for Vercel
 │   ├── index.html
 │   ├── vite.config.js
 │   ├── .env
@@ -89,26 +120,27 @@ BACKEND SEM3/
 
 ---
 
-## ⚙️ Installation & Running the Project
+## ⚙️ Local Development Setup
 
 ### 1. Backend Setup
 ```bash
-# Navigate to backend folder
+# Navigate to backend directory
 cd backend
 
 # Install dependencies
 npm install
 
+# (Optional) Seed sample data to MongoDB Atlas
+npm run seed
+
 # Start development server
 npm run dev
-# Or standard run:
-# npm start
 ```
-*Backend runs on `http://localhost:5001`.*
+*Backend runs locally on `http://localhost:5001`.*
 
 ### 2. Frontend Setup
 ```bash
-# Open a new terminal and navigate to frontend folder
+# Navigate to frontend directory
 cd frontend
 
 # Install dependencies
@@ -117,113 +149,61 @@ npm install
 # Start Vite dev server
 npm run dev
 ```
-*Frontend runs on `http://localhost:3000`.*
+*Frontend runs locally on `http://localhost:3000`.*
 
 ---
 
-## 🔐 Environment Variables
+## 🔐 Environment Variables Configuration
 
 ### Backend (`backend/.env`)
 ```env
 PORT=5001
-MONGO_URI=mongodb://127.0.0.1:27017/job_portal_db
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/job_portal?retryWrites=true&w=majority
 JWT_SECRET=mysecretkey123456
 UPLOAD_PATH=uploads
 ```
-*(For MongoDB Atlas, replace `MONGO_URI` with your connection string: `mongodb+srv://<user>:<password>@cluster.mongodb.net/job_portal?retryWrites=true&w=majority`)*
 
 ### Frontend (`frontend/.env`)
 ```env
-VITE_API_URL=http://localhost:5001/api
+VITE_API_URL=https://job-portal-backend-nkp4.onrender.com/api
+# Or for local development:
+# VITE_API_URL=http://localhost:5001/api
 ```
 
 ---
 
-## 📡 API Endpoints
+## 📡 API Endpoints Reference
 
 ### 1. Authentication (`/api/auth`)
 | Method | Endpoint | Description | Auth Required |
 |---|---|---|---|
-| `POST` | `/api/auth/candidate/register` | Register Candidate | No |
-| `POST` | `/api/auth/candidate/login` | Login Candidate | No |
-| `POST` | `/api/auth/recruiter/register` | Register Recruiter | No |
-| `POST` | `/api/auth/recruiter/login` | Login Recruiter | No |
+| `POST` | `/api/auth/candidate/register` | Register Candidate account | No |
+| `POST` | `/api/auth/candidate/login` | Login Candidate & receive JWT | No |
+| `POST` | `/api/auth/recruiter/register` | Register Recruiter account | No |
+| `POST` | `/api/auth/recruiter/login` | Login Recruiter & receive JWT | No |
 
 ### 2. Jobs (`/api/jobs`)
 | Method | Endpoint | Description | Auth Required |
 |---|---|---|---|
-| `POST` | `/api/jobs` | Post new job | Yes (Recruiter) |
-| `GET` | `/api/jobs` | Get all jobs | Yes |
+| `POST` | `/api/jobs` | Post new job opening | Yes (Recruiter) |
+| `GET` | `/api/jobs` | Get all active job listings | No / Public |
 | `GET` | `/api/jobs/recruiter/my-jobs` | Get jobs posted by logged-in recruiter | Yes (Recruiter) |
-| `GET` | `/api/jobs/:id` | Get job by ID | Yes |
-| `GET` | `/api/jobs/:id/applicants` | View applicants for job (ownership verified) | Yes (Recruiter Owner) |
+| `GET` | `/api/jobs/:id` | Get single job details by ID | No / Public |
+| `GET` | `/api/jobs/:id/applicants` | View applicants for job (Ownership verified) | Yes (Recruiter Owner) |
 | `POST` | `/api/jobs/:id/apply` | Apply to job with PDF resume upload | Yes (Candidate) |
 
 ### 3. Applications (`/api/applications`)
 | Method | Endpoint | Description | Auth Required |
 |---|---|---|---|
-| `GET` | `/api/applications/my-applications` | Get candidate's applications | Yes (Candidate) |
-
----
-
-## 📄 Key Implementation Highlights
-
-### 1. Duplicate Application Prevention
-Before creating an application, the backend queries MongoDB:
-```javascript
-const existingApplication = await Application.findOne({
-  job: req.params.id,
-  candidate: req.user.userId
-});
-
-if (existingApplication) {
-  return res.status(400).json({
-    message: "You have already applied for this job."
-  });
-}
-```
-
-### 2. Recruiter Ownership Authorization
-When a recruiter requests applicants for a job:
-```javascript
-const job = await Job.findById(req.params.id);
-
-if (!job) {
-  return res.status(404).json({ message: "Job not found." });
-}
-
-// Ensure logged-in recruiter matches job creator
-if (job.recruiter.toString() !== req.user.userId) {
-  return res.status(403).json({
-    message: "You are not authorized to view these applicants."
-  });
-}
-
-const applications = await Application.find({ job: req.params.id })
-  .populate("candidate", "name email");
-```
-
-### 3. Multer PDF Resume Upload
-Multer is configured to validate file types strictly for PDFs and store them in `backend/uploads/`:
-```javascript
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === "application/pdf" || path.extname(file.originalname).toLowerCase() === ".pdf") {
-    cb(null, true);
-  } else {
-    cb(new Error("Only PDF files are allowed!"), false);
-  }
-};
-```
+| `GET` | `/api/applications/my-applications` | Get candidate's submitted applications | Yes (Candidate) |
 
 ---
 
 ## 🧪 Testing with Postman
-Import the provided file `backend/postman_collection.json` into Postman:
-1. Register and login as a **Recruiter** -> copy `token`.
-2. Set header `Authorization: Bearer <recruiter_token>` on `POST /api/jobs` to create a job -> copy `_id`.
-3. Register and login as a **Candidate** -> copy `token`.
-4. Set header `Authorization: Bearer <candidate_token>` on `POST /api/jobs/<job_id>/apply`.
-   - Body mode: `form-data`
-   - Key: `resume` (File, select a `.pdf` file)
-5. Test duplicate check: Send the apply request again -> verify `400 Bad Request: "You have already applied for this job."`.
-6. Switch back to Recruiter token: Call `GET /api/jobs/<job_id>/applicants` -> verify candidate and resume are returned.
+Import the file [`backend/postman_collection.json`](file:///Users/tejaschavan1907/Desktop/BACKEND%20SEM3/backend/postman_collection.json) into Postman:
+1. Register/Login as **Recruiter** $\rightarrow$ copy `token`.
+2. Create Job via `POST /api/jobs` with `Authorization: Bearer <recruiter_token>`.
+3. Register/Login as **Candidate** $\rightarrow$ copy `token`.
+4. Apply via `POST /api/jobs/:id/apply` (form-data: `resume` file in PDF format).
+5. Verify duplicate restriction: Re-send application $\rightarrow$ receives `400 Bad Request`.
+6. Inspect applicants: Call `GET /api/jobs/:id/applicants` with Recruiter token $\rightarrow$ verify candidate info & resume path are returned.
