@@ -40,6 +40,8 @@ function Navbar() {
     localStorage.removeItem('role');
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
+    window.dispatchEvent(new Event('savedJobsChanged'));
+    window.dispatchEvent(new Event('appliedJobsChanged'));
     navigate('/login');
   };
 
@@ -78,8 +80,8 @@ function Navbar() {
             <IconBuilding size={16} /> Companies
           </a>
 
-          {/* Saved Jobs Link with live badge */}
-          {role !== 'recruiter' && (
+          {/* Saved Jobs Link with live badge - only for authenticated candidates */}
+          {token && role === 'candidate' && (
             <Link
               to="/candidate-dashboard?tab=saved"
               className={`nav-link nav-saved-link ${location.search.includes('tab=saved') ? 'active' : ''}`}

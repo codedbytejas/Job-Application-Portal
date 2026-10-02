@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Toast from '../components/Toast';
 import Footer from '../components/Footer';
@@ -19,6 +19,7 @@ import {
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 function RecruiterDashboard() {
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -28,12 +29,18 @@ function RecruiterDashboard() {
 
   const userName = localStorage.getItem('userName') || 'Recruiter';
   const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
   };
 
   useEffect(() => {
+    if (!token || role !== 'recruiter') {
+      navigate('/login');
+      return;
+    }
+
     const fetchMyJobs = async () => {
       try {
         const res = await axios.get(`${API_URL}/jobs/recruiter/my-jobs`, {

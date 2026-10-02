@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import JobCard from '../components/JobCard';
 import Toast from '../components/Toast';
@@ -27,6 +27,7 @@ import {
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 function CandidateDashboard() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') || 'applications';
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -41,6 +42,14 @@ function CandidateDashboard() {
   const userId = localStorage.getItem('userId');
   const userName = localStorage.getItem('userName') || 'Candidate';
   const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
+
+  // Protect route
+  useEffect(() => {
+    if (!token || role === 'recruiter') {
+      navigate('/login');
+    }
+  }, [token, role, navigate]);
 
   const [profile, setProfile] = useState({
     headline: 'Full Stack JavaScript Developer | React & Node.js',
